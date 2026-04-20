@@ -34,7 +34,7 @@ export default function SuppliersPage() {
   };
 
   return (
-    <div className="page">
+    <div className="page form-page">
       <h1>Suppliers</h1>
       <form className="card form" onSubmit={handleSubmit}>
         <input placeholder="Supplier name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />

@@ -70,7 +70,7 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="page">
+    <div className="page form-page">
       <h1>Products</h1>
 
       <form className="card form" onSubmit={handleSubmit}>

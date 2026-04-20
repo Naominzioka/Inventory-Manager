@@ -22,7 +22,7 @@ export default function CategoriesPage() {
   };
 
   return (
-    <div className="page">
+    <div className="page form-page">
       <h1>Categories</h1>
       <form className="card form" onSubmit={handleSubmit}>
         <input placeholder="Category name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />

@@ -41,7 +41,7 @@ export default function TransactionsPage() {
   };
 
   return (
-    <div className="page">
+    <div className="page form-page">
       <h1>Transactions</h1>
       <form className="card form" onSubmit={handleSubmit}>
         <select value={form.product_id} onChange={(e) => setForm({ ...form, product_id: e.target.value })} required>
