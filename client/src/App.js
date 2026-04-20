@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
 import { AuthProvider, useAuth } from "./auth";
 import ProtectedRoute from "./ProtectedRoute";
 import LoginPage from "./LoginPage";
+import RegisterPage from "./RegisterPage";
 import DashboardPage from "./DashboardPage";
 import ProductsPage from "./ProductsPage";
 import CategoriesPage from "./CategoriesPage";
@@ -34,6 +35,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/products" element={<ProtectedRoute><ProductsPage /></ProtectedRoute>} />
         <Route path="/categories" element={<ProtectedRoute><CategoriesPage /></ProtectedRoute>} />
