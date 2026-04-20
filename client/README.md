@@ -1,70 +1,112 @@
-# Getting Started with Create React App
+Frontend Mock Data Phase
+Overview
+Before the real Flask backend is fully connected, the frontend runs using a mock API layer. Mock data is sample data that imitates the structure and behavior of the real backend responses, allowing the interface to be developed and tested without depending on live server endpoints.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This means the application can already:
 
-## Available Scripts
+render pages,
 
-In the project directory, you can run:
+navigate between routes,
 
-### `npm start`
+display product, category, supplier, and transaction data,
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+simulate form submissions,
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+update the UI as if it were connected to a real backend.
 
-### `npm test`
+Why this approach is used
+The mock-first approach allows frontend development to continue even when backend routes, database connections, or authentication endpoints are not yet complete. This helps separate UI development from backend development and reduces blockers during the build process.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+It also improves code quality because the frontend is built against a defined response structure early, making it easier to switch to the real API later without rewriting the components. If the mock API and real API share the same response shape, the page components can stay mostly unchanged.
 
-### `npm run build`
+What happens during the mock phase
+During this phase, the frontend does not make real HTTP requests to the Flask backend. Instead, page components call functions from a local api.js file, and those functions return fake data using JavaScript promises that behave similarly to real API responses.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+For example:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+productsAPI.getAll() returns a list of sample products,
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+categoriesAPI.getAll() returns sample categories,
 
-### `npm run eject`
+suppliersAPI.getAll() returns sample suppliers,
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+transactionsAPI.create() simulates stock-in or stock-out behavior.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+This allows the app to behave like a working system while backend integration is still in progress.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+What the user can already see
+Even before real backend integration, the frontend can still demonstrate the main user experience:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+login flow with a mock user,
 
-## Learn More
+dashboard summaries,
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+product listing,
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+category listing,
 
-### Code Splitting
+supplier listing,
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+stock transaction forms,
 
-### Analyzing the Bundle Size
+route protection based on local auth state.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+This is useful for UI testing, demos, layout refinement, and validating that the frontend logic works correctly before real server communication begins.
 
-### Making a Progressive Web App
+What is not real yet
+At this stage, data is temporary and in-memory, which means it is not stored in the real database. If the page refreshes, mock-created records may reset depending on how the mock layer is written. Mock login also does not authenticate against the real Flask user table yet.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Because of that:
 
-### Advanced Configuration
+created records are not truly persistent,
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+security and role checks are only simulated,
 
-### Deployment
+backend validation and database constraints are not yet being enforced by the server.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+How the transition to the real backend works
+The frontend is intentionally designed so that page components do not directly depend on the backend implementation. Instead, they call shared functions from api.js, which acts as the communication layer between the UI and the data source.
 
-### `npm run build` fails to minify
+When the Flask backend is ready, the mock functions in api.js are replaced with real Axios calls such as:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+GET /api/products
+
+POST /api/products
+
+GET /api/categories
+
+GET /api/suppliers
+
+GET /api/transactions
+
+POST /auth/login
+
+Because the components already use the same function names and expected response formats, only the API layer needs to change while most of the frontend remains the same.
+
+Benefits of this design
+This staged approach provides several advantages:
+
+the frontend can be built and tested early,
+
+pages can be reviewed before backend completion,
+
+integration risk is reduced,
+
+the final code stays cleaner because data access is centralized in one place.
+
+It also helps document a professional workflow: first define the UI and response contract, then connect the live backend once the server-side API is stable.
+
+Current architecture in the client
+At the moment, the client follows this flow:
+
+text
+React Pages -> api.js (mock functions) -> fake in-memory data
+After backend integration, the flow becomes:
+
+text
+React Pages -> api.js (Axios requests) -> Flask API -> Database
+This design ensures that the frontend remains consistent while the data source changes from simulated to real.
+
+Project note
+The mock phase is a development step only. It is used to prepare the frontend structure, user interface, and interaction logic before the application is fully connected to the Flask backend and persistent database. Once the backend integration is completed, the mock layer is replaced by real API communication.
+
