@@ -20,12 +20,26 @@ export function AuthProvider({ children }) {
     return { data: { user: fakeUser } };
   };
 
+  const register = async (payload) => {
+    return {
+      data: {
+        message: "User registered successfully",
+        user: {
+          id: Date.now(),
+          username: payload.username,
+          email: payload.email,
+          role: payload.role,
+        },
+      },
+    };
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("inventory_user");
   };
 
-  const value = useMemo(() => ({ user, login, logout }), [user]);
+  const value = useMemo(() => ({ user, login, register, logout }), [user]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
