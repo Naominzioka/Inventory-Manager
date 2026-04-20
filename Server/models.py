@@ -1,4 +1,6 @@
 # models for the flask app
+import re
+
 from config import db, bcrypt
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -31,12 +33,14 @@ class User(db.Model):
     def authenticate(self, password):
         return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
     
+    #validations for email format
     @validates('email')
-    def validate_email(self, key, value):
-        if '@' not in value:
-            raise ValueError('Invalid email address')
+    def validate_user(self, key, value):
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if key == 'email':
+            if value and not re.match(email_pattern, value):
+                raise ValueError('Invalid email address format (e.g., user@example.com)')
         return value
-    
             
             
 class Role(db.Model):
@@ -125,8 +129,10 @@ class Supplier(db.Model):
 
     @validates('email', 'phone')
     def validate_email(self, key, value):
-        if key == 'email' and '@' not in value:
-            raise ValueError('Invalid email address')
+        email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if key == 'email':
+            if value and not re.match(email_pattern, value):
+                raise ValueError('Invalid email address format (e.g., user@example.com)')    
         if key == 'phone' and not value.isdigit():
             raise ValueError('Phone number must contain only digits')
         return value
